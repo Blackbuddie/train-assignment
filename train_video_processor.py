@@ -30,15 +30,17 @@ try:
     output_layers_indices = net.getUnconnectedOutLayers()
     output_layers = []
     
-    if not output_layers_indices:
+    if len(output_layers_indices) == 0:
         output_layers = [layer_names[-1]]
     else:
         for i in output_layers_indices:
             idx = i.item() if hasattr(i, 'item') else i
+            if isinstance(idx, (list, np.ndarray)):
+                idx = idx[0]
             try:
                 layer_name = layer_names[idx - 1] if idx > 0 else layer_names[idx]
                 output_layers.append(layer_name)
-            except IndexError:
+            except (IndexError, TypeError):
                 continue
     
     if not output_layers and layer_names:
